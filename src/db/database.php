@@ -29,7 +29,7 @@
 
     if (!$result_set) {
         echo mysqli_error($db);
-        
+
         exit("The Database query failed.");
     }
   }
