@@ -1,25 +1,16 @@
 <?php
-  $nav_selected = "APPLICATIONS";
-  $left_selected = "APPLICATIONS";
-  $tabTitle = "SBOM - Applications";
+   $nav_selected = "APPLICATIONS";
+   $left_selected = "APPLICATIONS";
+   $tabTitle = "SBOM - Applications";
 
-  include "get_scope.php";
+  include "../bom/get_scope.php";
   include("../../../../index.php");
-?>
-
-//Get DB Credentials
-  $DB_SERVER = constant('DB_SERVER');
-  $DB_NAME = constant('DB_NAME');
-  $DB_USER = constant('DB_USER');
-  $DB_PASS = constant('DB_PASS');
-  //PDO connection
-  $pdo = new PDO("mysql:host=$DB_SERVER;dbname=$DB_NAME;port=3307", $DB_USER, $DB_PASS);
 
   $def = "false";
   $DEFAULT_SCOPE_FOR_RELEASES = getScope($db);
   $scopeArray = array();
 
-  require_once('calculate_color.php');
+  require_once('../bom/calculate_color.php');
 ?>
 
 
@@ -36,11 +27,11 @@
       // output data of each row
       while($row = $result->fetch_assoc()) {
         echo '<tr>
-          <td>'.$row["app_id"].'</td>
-          <td>'.$row["app_name"].'</td>
-          <td>'.$row["app_version"].'</td>
-          <td>'.$row["app_status"].' </span> </td>
-          <td>'.$row["is_eol"].'</td>
+        <td>'.$row["app_id"].'</td>
+        <td>'.$row["app_name"].'</td>
+        <td>'.$row["app_version"].'</td>
+        <td>'.$row["app_status"].' </span> </td>
+        <td>'.$row["is_eol"].'</td>
         </tr>';
       }//end while
     }//end if
@@ -78,116 +69,99 @@
   color: white;">'.$pref_err.'</p>'
 ?>
 
-  <div class="right-content">
-    <div class="container">
-      <h3  id = scannerHeader style = "color: #01B0F1;">Scanner --> Applications </h3>
+    <div class="wrap">
+      <h3  id = scannerHeader style = "color: #01B0F1;">Applications --> Applications List </h3>
 
       <!-- Form to retrieve user preference -->
       <form id='getpref-form' name='getpref-form' method='post' action='' style='display: inline;'>
-        <button type='submit' name='getpref' value='submit'
-        style='background: #01B0F1;
-          color: white;
-          border: none;
-          border-radius: 10px;
-          padding: 1rem;
-          margin-right: 1rem;'>Show My Applications</button>
+        <button type='submit' name='getpref' value='submit'>Show My Applications</button>
       </form>
       <form id='getdef-form' name='getdef-form' method='post' action='' style='display: inline;'>
-        <button type='submit' name='getdef' value='submit'
-        style='background: #01B0F1;
-          color: white;
-          border: none;
-          border-radius: 10px;
-          padding: 1rem;
-          margin-right: 1rem;'>Show System Applications</button>
+        <button type='submit' name='getdef' value='submit'>Show System Applications</button>
       </form>
       <form id='getall-form' name='getall-form' method='post' action='' style='display: inline;'>
-        <button type='submit' name='getall' value='submit'
-        style='background: #01B0F1;
-          color: white;
-          border: none;
-          border-radius: 10px;
-          padding: 1rem;'>Show All Applications</button>
+        <button type='submit' name='getall' value='submit'>Show All Applications</button>
       </form>
 
-      <h3><img src="images/sbom_list.png"  style="max-height: 35px;" />Application List</h3>
-      <table id="info" cellpadding="0" cellspacing="0" border="0"
-        class="datatable table table-striped table-bordered datatable-style table-hover"
-        width="100%" style="width: 100px;">
-        <thead>
-          <tr id="table-first-row">
+      <div class="table-container">
+        <table id="info" cellpadding="0" cellspacing="0" border="0"
+          class="datatable table table-striped table-bordered datatable-style table-hover"
+          width="100%" style="width: 100px;">
+          <thead>
+            <tr id="table-first-row">
             <th>App ID</th>
             <th>App Name</th>
             <th>App Version</th>
             <th>App Status</th>
             <th>EOL</th>
-          </tr>
-        </thead>
-      <tbody>
-      <?php
-        /*----------------- GET PREFERENCE COOKIE -----------------*/
-        //if user clicks "get all apps", retrieve all applications
-        if(isset($_POST['getall'])) {
-          $def = "false";
-          ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "BOM --> Applications --> All Applications";</script>
-          <?php
-          getBoms($db);
-        //If user clicks "show system apps", display applications list filtered by default system scope
-        } elseif (isset($_POST['getdef'])) {
-          $def = "true";
-          ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "BOM --> Applications --> System Applications";</script>
-          <?php
-          getBoms($db);
-          getFilterArray($db);
-         } //default if preference cookie is set, display user BOM preferences
-        elseif(isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
-          $def = "false";
-          ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "BOM --> Applications --> My Applications";</script>
-          <?php
-          $prep = rtrim(str_repeat('?,', count(json_decode($_COOKIE[$cookie_name]))), ',');
-          $sql = 'SELECT * FROM applications WHERE app_id IN ('.$prep.')';
-          $pref = $pdo->prepare($sql);
-          $pref->execute(json_decode($_COOKIE[$cookie_name]));
+            </tr>
+          </thead>
+        <tbody>
+        <?php
+          /*----------------- GET PREFERENCE COOKIE -----------------*/
+          //if user clicks "get all BOMS", retrieve all BOMS
+          if(isset($_POST['getall'])) {
+            $def = "false";
+            ?>
+            <script>document.getElementById("scannerHeader").innerHTML = "Applications --> Applications List --> All Applications";</script>
+            <?php
+            getBoms($db);
+          //If user clicks "show system BOMS", display BOM list filtered by default system scope
+          } elseif (isset($_POST['getdef'])) {
+            $def = "true";
+            ?>
+            <script>document.getElementById("scannerHeader").innerHTML = "Applications --> Applications List --> System Applications";</script>
+            <?php
+            getBoms($db);
+            getFilterArray($db);
+          } //default if preference cookie is set, display user BOM preferences
+          elseif(isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
+            $def = "false";
+            ?>
+            <script>document.getElementById("scannerHeader").innerHTML = "Applications --> Applications List --> My Applications";</script>
+            <?php
+            $prep = rtrim(str_repeat('?,', count(json_decode($_COOKIE[$cookie_name]))), ',');
+            $sql = 'SELECT * FROM applications WHERE app_id IN ('.$prep.')';
+            $pref = $pdo->prepare($sql);
+            $pref->execute(json_decode($_COOKIE[$cookie_name]));
 
-          while($row = $pref->fetch(PDO::FETCH_ASSOC)) {
-            echo '<tr>
+            while($row = $pref->fetch(PDO::FETCH_ASSOC)) {
+              echo '<tr>
               <td>'.$row["app_id"].'</td>
               <td>'.$row["app_name"].'</td>
               <td>'.$row["app_version"].'</td>
               <td>'.$row["app_status"].' </span> </td>
               <td>'.$row["is_eol"].'</td>
-            </tr>';
+              </tr>';
+            }
+          }//if no preference cookie is set but user clicks "show my BOMS"
+          elseif(isset($_POST['getpref']) && !isset($_COOKIE[$cookie_name])) {
+            $def = "false";
+            ?>
+            <script>document.getElementById("scannerHeader").innerHTML = "Applications --> Applications List --> All Applications";</script>
+            <?php
+            getBoms($db);
+          }//if no preference cookie is set show all BOMS
+          else {
+            $def = "false";
+            ?>
+            <script>document.getElementById("scannerHeader").innerHTML = "Applications --> Applications List --> All Applications";</script>
+            <?php
+            getBoms($db);
           }
-        }//if no preference cookie is set but user clicks "show my BOMS"
-        elseif(isset($_POST['getpref']) && !isset($_COOKIE[$cookie_name])) {
-          $def = "false";
-          ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "BOM --> Applications --> All Applications";</script>
-          <?php
-          getBoms($db);
-        }//if no preference cookie is set show all BOMS
-        else {
-          $def = "false";
-          ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "BOM --> Applications --> All Applications";</script>
-          <?php
-          getBoms($db);
-        }
-      ?>
-      </tbody>
-      <tfoot>
-        <tr>
+        ?>
+        </tbody>
+        <tfoot>
+          <tr>
           <th>App ID</th>
           <th>App Name</th>
           <th>App Version</th>
           <th>App Status</th>
           <th>EOL</th>
-        </tr>
-      </tfoot>
-      </table>
+          </tr>
+        </tfoot>
+        </table>
+      </div>
 
     <script type="text/javascript" language="javascript">
     $(document).ready( function () {
@@ -241,12 +215,13 @@
           });
         table.rows(indexes).remove().draw();
      }
+
+    const listTable = document.querySelector('#info');
+    const infoFilter = document.querySelector('#info_filter');
+    let z = document.createElement('div');
+    z.classList.add('table-container');
+
+    z.append(listTable);
+    infoFilter.after(z);
     } );
   </script>
-
- <style>
-   tfoot {
-     display: table-header-group;
-   }
- </style>
-<?php include("./footer.php"); ?>
