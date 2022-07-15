@@ -22,13 +22,36 @@ global $pref_err;
 
 function getFixPlan($db)
 {
-    //your code here
-
+   //your code here 
 }
 
 function getSecuritySummary($db)
 {
-    //your code here
+    $sql =  "SELECT red_app_id, app_name, app_version, cmpt_version, cmpt_id, cmpt_name, monitoring_id, monitoring_digest, issue_count 
+    FROM `apps_components` 
+    WHERE issue_count > 0;";
+    $result = $db->query($sql);
+
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+        echo '<tr>
+	    <td>'.$row["red_app_id"].'</td>
+          <td>'.$row["app_name"].'</td>
+          <td>'.$row["app_version"].'</td>
+          <td>'.$row["cmpt_version"].' </td>
+          <td>'.$row["cmpt_id"].'</td>
+          <td>'.$row["cmpt_name"].'</td>
+          <td>'.$row["monitoring_id"].'</td>
+          <td>'.$row["monitoring_digest"].'</td>
+          <td>'.$row["issue_count"].'</span> </td>
+        </tr>';
+      }//end while
+    }//end if
+    else {
+      echo "0 results";
+    }//end else
+    $result->close();
 
 }
 
@@ -246,6 +269,42 @@ function getLicenseCounts($db)
             </tfoot>
         </table>
     </div>
+    
+    <div class="table-container">
+      <h4  style = "color: #01B0F1;">Security Summary </h4>
+      <table id="info" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered datatable-style table-hover"
+        width="100%" style="width: 100px;">
+        <thead>
+          <tr id="table-first-row">
+            <th>red App Id</th>
+	        <th>App Name</th>
+            <th>App Version</th>
+            <th>Cmpt Version</th>
+            <th>Cmpt Id</th>
+            <th>Cmpt Name </th>
+            <th>Monitoring Id</th>
+            <th>Monitering Digest</th>
+            <th>Issue Count</th>	      
+          </tr>
+        </thead>
+      <tbody>
+        <?php
+      if(isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
+          $def = "false";
+          while($row = $pref->fetch(PDO::FETCH_ASSOC)) {
+            echo '<tr>
+               <td>'.$row["red_app_id"].'</td>
+          	   <td>'.$row["app_name"].'</td>
+               <td>'.$row["app_version"].'</td>
+               <td>'.$row["cmpt_version"].' </td>
+               <td>'.$row["cmpt_id"].'</td>
+               <td>'.$row["cmpt_name"].'</td>
+               <td>'.$row["monitoring_id"].'</td>
+               <td>'.$row["monitoring_digest"].'</td>
+               <td>'.$row["issue_count"].'</span> </td>
+            </tr>';
+          }
+        // 
     <div class="table-container">
         <h4 style="color: #01B0F1;">Duplicate Components</h4>
         <table id="info" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered datatable-style table-hover" width="100%" style="width: 100px;">
