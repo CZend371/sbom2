@@ -348,7 +348,7 @@ function getLicenseCounts($db)
         <table id="info" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered datatable-style table-hover" width="100%" style="width: 100px;">
             <thead>
                 <tr id="table-first-row">
-                    <th>App ID</th>
+                    <th>App Id</th>
                     <th>App Name</th>
                     <th>App Version</th>
                     <th>Component ID</th>
@@ -399,7 +399,7 @@ function getLicenseCounts($db)
             </tbody>
             <tfoot>
                 <tr>
-                    <th>App ID</th>
+                    <th>App Id</th>
                     <th>App Name</th>
                     <th>App Version</th>
                     <th>Component ID</th>
@@ -461,7 +461,7 @@ function getLicenseCounts($db)
         <table id="info" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered datatable-style table-hover" width="100%" style="width: 100px;">
             <thead>
                 <tr id="table-first-row">
-                    <th>App ID</th>
+                    <th>App Id</th>
                     <th>App Name</th>
                     <th>App Version</th>
 
@@ -485,7 +485,7 @@ function getLicenseCounts($db)
             </tbody>
             <tfoot>
                 <tr>
-                <th>App ID</th>
+                <th>App Id</th>
                 <th>App Name</th>
                 <th>App Version</th>
                 </tr>
