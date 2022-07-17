@@ -147,8 +147,24 @@ function getComponentCount($db)
 
 function getDependencyReport($db)
 {
-    //your code here
-
+    $sql = 'SELECT app_id, app_name, app_version 
+    FROM `apps_components` 
+    WHERE app_id != red_app_id;';
+    $result = $db->query($sql);
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while ($row = $result->fetch_assoc()) {
+            echo '<tr>
+                <td>' . $row["app_id"] . '</td>
+                <td>' . $row["app_name"] . '</td>
+                <td>' . $row["app_version"] . '</td>
+                </tr>';
+        } //end while
+    } //end if
+    else {
+        echo "0 results";
+    } //end else
+    $result->close();
 }
 
 function getUniqueComponents($db)
@@ -284,27 +300,49 @@ function getLicenseCounts($db)
             <th>Cmpt Name </th>
             <th>Monitoring Id</th>
             <th>Monitering Digest</th>
-            <th>Issue Count</th>	      
-          </tr>
+            <th>Issue Count</th>
+
+           </tr>
         </thead>
-      <tbody>
-        <?php
-      if(isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
-          $def = "false";
-          while($row = $pref->fetch(PDO::FETCH_ASSOC)) {
-            echo '<tr>
-               <td>'.$row["red_app_id"].'</td>
-          	   <td>'.$row["app_name"].'</td>
-               <td>'.$row["app_version"].'</td>
-               <td>'.$row["cmpt_version"].' </td>
-               <td>'.$row["cmpt_id"].'</td>
-               <td>'.$row["cmpt_name"].'</td>
-               <td>'.$row["monitoring_id"].'</td>
-               <td>'.$row["monitoring_digest"].'</td>
-               <td>'.$row["issue_count"].'</span> </td>
-            </tr>';
-          }
-        // 
+        <tbody>
+            <?php
+
+        getSecuritySummary($db);
+        if (isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
+            $def = "false";
+       
+             while ($row = $pref->fetch(PDO::FETCH_ASSOC)) {
+                echo '<tr>
+                <td>'.$row["red_app_id"].'</td>
+                <td>'.$row["app_name"].'</td>
+                <td>'.$row["app_version"].'</td>
+                <td>'.$row["cmpt_version"].' </td>
+                <td>'.$row["cmpt_id"].'</td>
+                <td>'.$row["cmpt_name"].'</td>
+                <td>'.$row["monitoring_id"].'</td>
+                <td>'.$row["monitoring_digest"].'</td>
+                <td>'.$row["issue_count"].'</span> </td>
+              </tr>';
+            }
+        } //if no preference cookie is set but user clicks "show my BOMS"
+       ?>
+       </tbody>
+            <tfoot>
+                <tr>
+            <th>red App Id</th>
+	        <th>App Name</th>
+            <th>App Version</th>
+            <th>Cmpt Version</th>
+            <th>Cmpt Id</th>
+            <th>Cmpt Name </th>
+            <th>Monitoring Id</th>
+            <th>Monitering Digest</th>
+            <th>Issue Count</th>	      
+          </tr> 
+          </tfoot>
+        </table>
+            
+        </div>    
     <div class="table-container">
         <h4 style="color: #01B0F1;">Duplicate Components</h4>
         <table id="info" cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered datatable-style table-hover" width="100%" style="width: 100px;">
@@ -354,6 +392,7 @@ function getLicenseCounts($db)
                     $def = "false";
                 ?>
                 <?php
+
                     getDuplicateComponents($db);
                 }
                 ?>
@@ -424,16 +463,31 @@ function getLicenseCounts($db)
                 <tr id="table-first-row">
                     <th>App ID</th>
                     <th>App Name</th>
+                    <th>App Version</th>
 
                 </tr>
             </thead>
             <tbody>
+                <?php
+            getDependencyReport($db);
+            if (isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
+                $def = "false";
+
+                while ($row = $pref->fetch(PDO::FETCH_ASSOC)) {
+                    echo '<tr>
+                <td>' . $row["app_id"] . '</td>
+                <td>' . $row["app_name"] . '</td>
+                <td>' . $row["app_version"] . '</td>
+                </tr>';
+                }
+            }
+            ?>
             </tbody>
             <tfoot>
                 <tr>
-                    <th>App ID</th>
-                    <th>App Name</th>
-
+                <th>App ID</th>
+                <th>App Name</th>
+                <th>App Version</th>
                 </tr>
             </tfoot>
         </table>
@@ -498,7 +552,7 @@ function getLicenseCounts($db)
             </tfoot>
         </table>
     </div>
-
+                
     <script type="text/javascript" language="javascript">
         $(document).ready(function() {
             $('#info').DataTable({
@@ -562,5 +616,4 @@ function getLicenseCounts($db)
 
             $('.table-container').doubleScroll(); // assign a double scroll to this class
         });
-    </script>
-</div>
+    </script> 
