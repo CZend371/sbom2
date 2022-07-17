@@ -15,8 +15,8 @@
                 <p> FOSS Count </p>
             </div>
         </a>
-        <a href="<?php echo checkSelectedLeftMenuLink( "AppComprehensiveReport", "reports_App_Comprehensive_Report.php" ); ?>">
-            <div <?php echo checkSelectedLeftMenu( "AppComprehensiveReport" ); ?>>
+        <a href="<?php echo checkSelectedLeftMenuLink( "APPCOMPREHENSIVEREPORT", "app_comprehensive_report.php" ); ?>">
+            <div <?php echo checkSelectedLeftMenu( "APPCOMPREHENSIVEREPORT" ); ?>>
                 <?php include $assetsPath."svg/starCircled.svg"; ?>
                 <p> App Comprehensive Report </p>
             </div>
