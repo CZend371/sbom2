@@ -324,7 +324,7 @@ function getLicenseCounts($db)
                 <td>'.$row["issue_count"].'</span> </td>
               </tr>';
             }
-        } //if no preference cookie is set but user clicks "show my BOMS"
+        } 
        ?>
        </tbody>
             <tfoot>
