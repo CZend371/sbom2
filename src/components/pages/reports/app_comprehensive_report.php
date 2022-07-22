@@ -1006,7 +1006,7 @@ if (isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_PO
     </script>
   </head>
   <body>
-    <table class="columns">
+    
       <tr>
         <td><div id="requesterChart" style="border: 1px solid #ccc"></div></td>
         <td><div id="securityChart" style="border: 1px solid #ccc"></div></td>
