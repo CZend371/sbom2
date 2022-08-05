@@ -1127,9 +1127,13 @@
                             var data = google.visualization.arrayToDataTable([
                                 ['Requester name', 'Approved', 'Pending'],
                                 <?php
+                                $app_name = $_GET['app_name'] ?? null;
+                                $app_version = $_GET['app_version'] ?? null;
                                 $query = $db->query("SELECT requester, SUM(CASE WHEN status LIKE '%Approved%' THEN 1 ELSE 0 END) as total_approved, SUM(CASE WHEN status NOT LIKE '%Approved%' THEN 1 ELSE 0 END) as not_approved
-          FROM apps_components
-          GROUP BY requester;");
+                                FROM apps_components
+                                WHERE app_name ='$app_name'
+                                AND app_version = '$app_version'
+                                GROUP BY requester;");
                                 while ($query_row = $query->fetch_assoc()) {
                                     $requester = $query_row['requester'];
                                     $total_approved = $query_row['total_approved'];
@@ -1150,24 +1154,24 @@
 
 
                         function drawSecurityChart() {
-                            var data = google.visualization.arrayToDataTable([
-                                ['App name', 'Issue Count', 'Total Issue Count'],
-                                <?php
-                                 $app_name = $_GET['app_name'] ?? null;
-                                 $app_version = $_GET['app_version'] ?? null;
-                                 $query = $db->query("SELECT DISTINCT red_app_id, app_name, app_version, cmpt_version, cmpt_id, cmpt_name, monitoring_id, monitoring_digest, issue_count
-                                 FROM `apps_components`
-                                 WHERE issue_count > 0 AND app_name ='$app_name' AND app_version = '$app_version';");
-                                while ($query_row = $query->fetch_assoc()) {
-                                    $app_name = $query_row['app_name'];
-                                    $num_issue = $query_row['num_issue'];
-                                    $total_issue_count = $query_row['total_issue_count'];
-                                ?>['<?php echo $app_name; ?>', <?php echo $num_issue; ?>, <?php echo $total_issue_count; ?>],
-                                <?php
-                                }
-                                ?>
-                            ]);
-
+                        var data = google.visualization.arrayToDataTable([
+                            ['App name', 'Security Issue Count', ],
+                            <?php
+                            $app_name = $_GET['app_name'] ?? null;
+                            $app_version = $_GET['app_version'] ?? null;
+                            $app_id = $_GET['app_id'] ?? null;
+                            $query = $db->query("SELECT DISTINCT red_app_id, app_name, app_version, cmpt_version, cmpt_id, cmpt_name, monitoring_id, monitoring_digest, issue_count
+                            FROM `apps_components`
+                            WHERE issue_count > 0 AND app_name ='$app_name'AND app_version = '$app_version';");
+   
+                            while ($query_row = $query->fetch_assoc()) {
+                                $app_name = $query_row['app_name'];
+                                $issue_count = $query_row['issue_count'];
+                            ?>['<?php echo $app_name; ?>', <?php echo $issue_count; ?>],
+                            <?php
+                            }
+                            ?>
+                        ]);
                         var options = {
                             title: 'Security Summary Report',
                             width: 900,
@@ -1175,7 +1179,7 @@
                         };
                         var chart = new google.visualization.BarChart(document.getElementById("securityChart"));
                         chart.draw(data, options);
-                        }
+                    }
 
 
                         //****************************************************** */
@@ -1210,6 +1214,7 @@
                         var chart = new google.visualization.BarChart(document.getElementById("componentChart"));
                         chart.draw(data, options);
                         }
+                        
 
                         function drawLicenesCount() {
                             var data = google.visualization.arrayToDataTable([
