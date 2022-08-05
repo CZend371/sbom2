@@ -1139,13 +1139,11 @@
                                 }
                                 ?>
                             ]);
-
                             var options = {
                             title: 'Requester count report',
                             width: 900,
                             height: 500,
                         };
-
                         var chart = new google.visualization.BarChart(document.getElementById("requesterChart"));
                         chart.draw(data, options);
                         }
@@ -1155,10 +1153,11 @@
                             var data = google.visualization.arrayToDataTable([
                                 ['App name', 'Issue Count', 'Total Issue Count'],
                                 <?php
-                                $query = $db->query("SELECT red_app_id,app_name, app_version, SUM(CASE WHEN issue_count > 0 THEN 1 ELSE 0 END)
-          as num_issue, SUM(issue_count) as total_issue_count
-          FROM apps_components
-          GROUP BY app_name;");
+                                 $app_name = $_GET['app_name'] ?? null;
+                                 $app_version = $_GET['app_version'] ?? null;
+                                 $query = $db->query("SELECT DISTINCT red_app_id, app_name, app_version, cmpt_version, cmpt_id, cmpt_name, monitoring_id, monitoring_digest, issue_count
+                                 FROM `apps_components`
+                                 WHERE issue_count > 0 AND app_name ='$app_name' AND app_version = '$app_version';");
                                 while ($query_row = $query->fetch_assoc()) {
                                     $app_name = $query_row['app_name'];
                                     $num_issue = $query_row['num_issue'];
