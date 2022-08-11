@@ -61,7 +61,7 @@ function getSystemAppSetName($db){
   $sql_get_system_app_set_name = '
     SELECT app_set_name FROM app_sets
     WHERE app_set_id IN
-    ( SELECT value FROM preferences WHERE name = "ACTIVE_APP_SET");
+    ( SELECT value FROM preferences WHERE name =  "ACTIVE_APP_SET");
   ';
   $name_result = $db->query($sql_get_system_app_set_name);
   $name_associative = $name_result->fetch_all(MYSQLI_ASSOC);
