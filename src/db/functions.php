@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 $sql_applications_query = "
   SELECT * FROM applications
 ";

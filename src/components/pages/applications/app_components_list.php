@@ -1,7 +1,7 @@
 <?php
   $nav_selected = "APPLICATIONS";
   $left_buttons = "YES";
-  $left_selected = "appLIST";
+  $left_selected = "APPCOMPONENTSLIST";
 
   include("../../../../index.php");
   include("./nav.php");
@@ -17,8 +17,6 @@
   $def = "false";
   $DEFAULT_SCOPE_FOR_RELEASES = getScope($db);
   $scopeArray = array();
-
-  //require_once('calculate_color.php');
 ?>
 
 
@@ -27,21 +25,32 @@
   global $pref_err;
 
   /*----------------- FUNCTION TO GET BOMS -----------------*/
-  function getApps($db) {
-    $sql = "SELECT * from applications;";
+  function getapps_components($db) {
+    $sql = "SELECT * from apps_components;";
     $result = $db->query($sql);
 
     if ($result->num_rows > 0) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
         echo '<tr>
-         <td><input type = "checkbox" class="applications" value="'.$row["app_id"].'"/></td>
-          <td><a class="btn" href="bom_sbom_tree_v2.php?id='.$row["app_id"].'">'.$row["app_id"].' </a> </td>
+         <td><input type = "checkbox" class="apps_components" value="'.$row["line_id"].'"/></td>
+          <td><a class="btn" href="bom_sbom_tree_v2.php?id='.$row["line_id"].'">'.$row["line_id"].' </a> </td>
+          <td>'.$row["red_app_id"].'</td>
+          <td>'.$row["cmpt_id"].'</td>
+          <td>'.$row["cmpt_name"].'</td>
+          <td>'.$row["cmpt_version"].'</td>
+          <td>'.$row["app_id"].'</td>
           <td>'.$row["app_name"].'</td>
           <td>'.$row["app_version"].'</td>
           <td>'.$row["app_status"].' </span> </td>
-          <td>'.$row["is_eol"].'</td>
-          
+          <td>'.$row["license"].'</td>
+          <td>'.$row["requester"].'</td>
+          <td>'.$row["monitoring_id"].'</td>
+          <td>'.$row["monitoring_digest"].'</td>
+          <td>'.$row["issue_count"].'</span> </td>
+          <td>'.$row["oss_count"].'</span> </td>
+          <td>'.$row["commercial_count"].'</span> </td>
+          <td>'.$row["total"].'</span> </td>   
         </tr>';
       }//end while
     }//end if
@@ -56,13 +65,13 @@
     global $pdo;
     global $DEFAULT_SCOPE_FOR_RELEASES;
 
-    $sql = "SELECT * FROM releases WHERE app_id LIKE ?";
+    $sql = "SELECT * FROM releases WHERE line_id LIKE ?";
     foreach($DEFAULT_SCOPE_FOR_RELEASES as $currentID){
       $sqlID = $pdo->prepare($sql);
       $sqlID->execute([$currentID]);
       if ($sqlID->rowCount() > 0) {
         while($row = $sqlID->fetch(PDO::FETCH_ASSOC)){
-          array_push($scopeArray, $row["app_id"]);
+          array_push($scopeArray, $row["line_id"]);
         }
       }
     }
@@ -89,23 +98,23 @@
         style='background: #01B0F1;
           color: white;
           border: none;
-          border-radius: 10px;
+          border-radius: 5px;
           padding: 1rem;
-          margin-right: 1rem;'>SET MY APPS</button>
+          margin-right: 1rem;'>SET MY APP commponents</button>
       </form>
       <form id='getdef-form' name='getdef-form' method='post' action='archive.php' style='display: inline;'>
-        <input type="hidden" name="applications" id="archived_application">
+        <input type="hidden" name="apps_components" id="archived_apps_components">
         <button type='submit' name='getdef' value='submit'
         style='background: #01B0F1;
           color: white;
           border: none;
-          border-radius: 10px;
+          border-radius: 5px;
           padding: 1rem;
           margin-right: 1rem;'>ARCHIVE</button>
         
       </form>
       <form id='deleted' name='getall-form' method='post' action='delete.php' style='display: inline;'>
-        <input type="hidden" name="applications" id="deleted_application">
+        <input type="hidden" name="apps_components" id="deleted_apps_components">
         <button type='submit' name='getall' value='submit'
         style='background: #01B0F1;
           color: white;
@@ -114,18 +123,30 @@
           padding: 1rem;'>DELETE</button>
       </form> 
 
-      <h3><img src="images/sbom_list.png"  style="max-height: 35px;" />APP List</h3>
+      <h3><img src="images/sbom_list.png"  style="max-height: 35px;" />APP components List</h3>
       <table id="info" cellpadding="0" cellspacing="0" border="0"
         class="datatable table table-striped table-bordered datatable-style table-hover"
         width="100%" style="width: 50px;">
         <thead>
           <tr id="table-first-row">
             <th><input type="checkbox"></th>
-            <th>App ID</th>
-            <th>App Name</th>
-            <th>App Version</th>
-            <th>App Status</th>
-            <th>Is EOL</th>
+            <th>line id</th>
+          <th>red app id</th>
+          <th>cmpt id</th>
+          <th>cmpt name</th>
+          <th>cpt version</th>
+          <th>app id</th>
+          <th>App Name</th>
+          <th>App Version</th>
+          <th>license</th>
+          <th>App Status</th>
+          <th>requestor</th>
+          <th>monitering id</th>
+          <th>monitoring digest</th>
+          <th>issue count</th>
+          <th>oss count</th>
+          <th>commecrial count</th>
+          <th>total</th>
           </tr>
         </thead>
       <tbody>
@@ -135,25 +156,25 @@
         if(isset($_POST['getall'])) {
           $def = "false";
           ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "APPS --> Software APPS --> All APPS";</script>
+          <script>document.getElementById("scannerHeader").innerHTML = "apps_components --> Software APPS --> All apps_components";</script>
           <?php
-          getApps($db);
+          getapps_components($db);
         //If user clicks "show system BOMS", display BOM list filtered by default system scope
         } elseif (isset($_POST['getdef'])) {
           $def = "true";
           ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "APPS --> Software APPS --> All APPS";</script>
+          <script>document.getElementById("scannerHeader").innerHTML = "apps_components --> Software APPS --> All apps_components";</script>
           <?php
-          getApps($db);
+          getapps_components($db);
           getFilterArray($db);
          } //default if preference cookie is set, display user BOM preferences
         elseif(isset($_COOKIE[$cookie_name]) || isset($_COOKIE[$cookie_name]) && isset($_POST['getpref'])) {
           $def = "false";
           ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "APPS --> Software APPS --> All APPS";</script>
+          <script>document.getElementById("scannerHeader").innerHTML = "apps_components --> Software APPS --> All apps_components";</script>
           <?php
           $prep = rtrim(str_repeat('?,', count(json_decode($_COOKIE[$cookie_name]))), ',');
-          $sql = 'SELECT * FROM sbom WHERE app_id IN ('.$prep.')';
+          $sql = 'SELECT * FROM sbom WHERE line_id IN ('.$prep.')';
           $pref = $pdo->prepare($sql);
           $pref->execute(json_decode($_COOKIE[$cookie_name]));
 
@@ -184,24 +205,36 @@
           ?>
           <script>document.getElementById("scannerHeader").innerHTML = "APPS --> Software APPS --> All APPS";</script>
           <?php
-          getApps($db);
+          getapps_components($db);
         }//if no preference cookie is set show all BOMS
         else {
           $def = "false";
           ?>
-          <script>document.getElementById("scannerHeader").innerHTML = "APPS --> Software APPS --> All APPS";</script>
+          <script>document.getElementById("scannerHeader").innerHTML = "apps_components --> Software APPS --> All apps_components";</script>
           <?php
-          getApps($db);
+          getapps_components($db);
         }
       ?>
       </tbody>
       <tfoot>
         <tr>
-          <th>App ID</th>
+          <th>line id</th>
+          <th>red app id</th>
+          <th>cmpt id</th>
+          <th>cmpt name</th>
+          <th>cpt version</th>
+          <th>app id</th>
           <th>App Name</th>
           <th>App Version</th>
+          <th>license</th>
           <th>App Status</th>
-          <th>Is EOL</th>
+          <th>requestor</th>
+          <th>monitering id</th>
+          <th>monitoring digest</th>
+          <th>issue count</th>
+          <th>oss count</th>
+          <th>commecrial count</th>
+          <th>total</th>
         </tr>
       </tfoot>
       </table>
@@ -248,8 +281,8 @@
           function (value, index) {
             var currentID = table.row(value).data()[1];
             var currentIDString = JSON.stringify(currentID);
-            for (var i = 0; i < app_id.length; i++){
-            if (currentIDString.includes(app_id[i])) {
+            for (var i = 0; i < line_id.length; i++){
+            if (currentIDString.includes(line_id[i])) {
               return false;
               break;
               }
@@ -259,17 +292,17 @@
         table.rows(indexes).remove().draw();
      }
      // store selected rows to archive or delete
-     $(".applications").change(function(){
-     var app = $("#archived_application").val();
+     $(".apps_components").change(function(){
+     var app = $("#archived_apps_components").val();
      var checkedApp = $(this).val();
      if ($(this).is(":checked")){
-      $("#archived_application").val(app+","+checkedApp);
-      $("#deleted_application").val(app+","+checkedApp);
+      $("#archived_apps_components").val(apps_component+","+checkedapps_component);
+      $("#deleted_apps_components").val(apps_component+","+checkedAapps_component);
      }
      else{
-      var newApp = app.replace(',' + checkedApp,'');
-      $("#archived_application").val(newApp);
-      $("#deleted_application").val(newApp);
+      var newApp = apps_component.replace(',' + checkedapps_component,'');
+      $("#archived_apps_component").val(newapps_component);
+      $("#deleted_apps_component").val(newapps_component);
      }
      
      })

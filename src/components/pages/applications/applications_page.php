@@ -11,7 +11,7 @@ $def = "false";
 $DEFAULT_SCOPE_FOR_RELEASES = getScope($db);
 $scopeArray = array();
 
-require_once('../bom/calculate_color.php');
+//require_once('../bom/calculate_color.php');
 ?>
 
 <?php
@@ -75,13 +75,13 @@ echo '<p
   <h3 id=scannerHeader style="color: #01B0F1;">Applications --> Applications List </h3>
   <!-- Form to retrieve user preference -->
   <form id='getpref-form' name='getpref-form' method='post' action='' style='display: inline;'>
-    <button type='submit' name='getpref' value='submit'>Show My Applications</button>
+    <button type='submit' name='getpref' value='submit'>My Applications List</button>
   </form>
   <form id='getdef-form' name='getdef-form' method='post' action='' style='display: inline;'>
-    <button type='submit' name='getdef' value='submit'>Show System Applications</button>
+    <button type='submit' name='getdef' value='submit'>show my application</button>
   </form>
   <form id='getall-form' name='getall-form' method='post' action='' style='display: inline;'>
-    <button type='submit' name='getall' value='submit'>Show All Applications</button>
+    <button type='submit' name='getall' value='submit'>show all application</button>
   </form>
 
   <div class="table-container">
@@ -235,3 +235,4 @@ echo '<p
       infoFilter.after(z);
     });
   </script>
+   
